@@ -14,26 +14,18 @@ func ScrapeDecks(sourceUrl string) []string {
 	b := makeRequestAndReturnBody(sourceUrl)
 	doc, _ := html.Parse(b)
 	matcher := func(n *html.Node) bool {
-		if n.DataAtom == atom.Span && n.Parent != nil && n.Parent.Parent != nil {
-			return scrape.Attr(n, "class") == "deck-meta"
+		if n.DataAtom == atom.Div && n.Parent != nil && n.Parent.Parent != nil {
+			return scrape.Attr(n, "class") == "deck-group"
 		}
 		return false
 	}
 
 	decks := scrape.FindAll(doc, matcher)
 	for _, deck := range decks {
-		p := deck.Parent
-		h4, _ := scrape.Find(deck, func(n *html.Node) bool {
-			if n.DataAtom == atom.H4 {
-				return true
-			}
-			return false
-		})
-
-		split := strings.SplitN(scrape.Text(h4), "-", 2)
-		uri := scrape.Attr(p, "id")
+		uri := scrape.Attr(deck, "id")
+		split := strings.Split(uri, "_-_")
 		deckurl := sourceUrl + "#" + uri
-		decklookup = append(decklookup, strings.TrimSpace(strings.ToLower(split[0])), strings.TrimSpace(strings.ToLower(split[1])), deckurl)
+		decklookup = append(decklookup, strings.Replace(strings.TrimSpace(strings.ToLower(split[0])), "_", ", ", 1), strings.TrimSpace(strings.ToLower(split[1])), deckurl)
 	}
 	return decklookup
 }
