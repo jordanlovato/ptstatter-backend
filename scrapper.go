@@ -33,7 +33,7 @@ func ScrapeDecks(sourceUrl string) []string {
 		split := strings.SplitN(scrape.Text(h4), "-", 2)
 		uri := scrape.Attr(p, "id")
 		deckurl := sourceUrl + "#" + uri
-		decklookup = append(decklookup, strings.TrimSpace(split[0]), strings.TrimSpace(split[1]), deckurl)
+		decklookup = append(decklookup, strings.TrimSpace(strings.ToLower(split[0])), strings.TrimSpace(strings.ToLower(split[1])), deckurl)
 	}
 	return decklookup
 }
@@ -53,7 +53,7 @@ func ScrapeStats(sourceUrl string) []string {
 		j := i % 7
 		switch j {
 		case 1, 3, 5:
-			statlookup = append(statlookup, scrape.Text(stat))
+			statlookup = append(statlookup, strings.ToLower(scrape.Text(stat)))
 		}
 	}
 	return statlookup
