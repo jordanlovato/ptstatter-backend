@@ -102,6 +102,12 @@ func CalculatePtStats(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE")
+			w.Header().Set("Access-Control-Allow-Headers", "Authorization, Accept, Accept-Language, Content-Language, Content-Type")
+			w.WriteHeader(http.StatusOK)
+
 			if _, err := io.Copy(w, &buf); err != nil {
 				panic(err.Error())
 			}
